@@ -1,0 +1,43 @@
+@use '../../styles/variables.scss' as vars;
+
+.loginform{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+
+  height: 35rem;
+  width: 40rem;
+  border-radius: 12px;
+
+  background-color: vars.$default-dark;
+  color: vars.$default-light;
+
+  &-inputs-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &-username, &-password {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-password {
+    margin-top: 3em;
+  }
+
+  label {
+    font-size: 20px;
+  }
+
+  input {
+    font-size: 20px;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    border-color: vars.$default-light;
+    width: 350px;
+    background-color: vars.$default-light;
+  }
+}
