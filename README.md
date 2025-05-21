@@ -6,7 +6,7 @@ Requirements:
 - Python 3.8+
 - Node.js and npm
 
-### Running locally:
+### Steps:
 - Pull the repo locally
 ```
 git clone https://github.com/mountaincharlie/job-queue-visualiser.git
@@ -38,3 +38,30 @@ npm run dev
 
 #### For the frontend, navigate to: `http://localhost:5173/`
 #### For API docs, navigate to: `http://localhost:8000/docs`
+
+## Initial UX/UI
+
+### Designs
+
+- Login Page Designs:
+- <img src="./assets/login-page-initial-design.jpeg" width="800" />
+
+- Job Queue Designs:
+- <img src="./assets/job-page-initial-design.jpeg" width="800" />
+
+### Logo
+
+- Borrowed from [HOWDEN Small Business page](https://www.howdeninsurance.co.uk/small-business)
+- <img src="./assets/howden-logo.webp" width="200" />
+
+### Fonts
+
+- The basic text font on the HOWDEN pages is a non-free font `Aktiv Grotesk`, which according to [similarfont.io](https://similarfont.io/2-google-fonts-similar-to-aktiv-grotesk) is very similar to Google Font's `Roboto`
+- Rather than have a seperate heading and text font, I plan to use UPPERCASE for headings and Capitalization for text
+
+### Colours
+
+- Colour palette example generated on: [mycolor.space](https://mycolor.space/?hex=%2318424E&sub=1)
+- I plan to keep to a simple 2 colours scheme pairing the main dark blue with one of the greys 
+- <img src="./assets/color-palette.png" width="400" />
+
