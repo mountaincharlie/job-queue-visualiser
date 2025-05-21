@@ -1,0 +1,7 @@
+@use './variables.scss' as vars;
+
+body{
+  margin: 0;
+  box-sizing: border-box;
+  font-family: vars.$default-font;
+}
