@@ -1,9 +1,9 @@
-import { createContext, useReducer, useRef } from "react";
+import { createContext, useReducer } from "react";
 
 const initialState = {
   // -- users
-  userLoggedIn: false,
-  activeUserDetails: null,  // user object
+  userLoggedIn: localStorage.getItem("userLoggedIn") === "true",  // checks local storage rather than setting default false
+  activeUserDetails: null,  // user object - TODO: check if this is necessary (some details are stored in the JWT too)
   // -- notifications
   showNotification: false,
   notificationData: { type:"info", message:"", duration:null },
@@ -12,6 +12,7 @@ const initialState = {
 function reducer (state, action) {
   switch (action.type) {
     case "SET_USER_LOGGED_IN":
+      localStorage.setItem("userLoggedIn", action.payload);
       return { ...state, userLoggedIn: action.payload };
     case "SET_ACTIVE_USER_DETAILS":
       return { ...state, activeUserDetails: action.payload };

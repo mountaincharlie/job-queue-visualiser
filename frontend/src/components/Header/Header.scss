@@ -21,5 +21,20 @@
     display: flex;
     align-items: center;
     font-size: 3em;
+
+    &-logout {
+      position:absolute;
+      font-size: 25px;
+      right: 3em;
+      text-decoration: underline;
+
+      &:hover{
+        cursor: pointer;
+      }
+    }
+
+    svg:hover {
+      cursor: pointer;
+    }
   }
 }

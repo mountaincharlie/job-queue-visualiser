@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from "react-router";
 import Button from '../Button/Button';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { postCheckUserCredentials } from '../../services/userServices';
 import { AppContext } from '../../contexts/AppContext';
+import { getValidToken } from '../../utils/userUtils';
 import { IoMdEye } from "react-icons/io";
 import { IoEyeOff } from "react-icons/io5";
 import './LoginForm.scss';
@@ -12,8 +13,8 @@ import './LoginForm.scss';
 const LoginForm = () => {
 
   const { 
+    userLoggedIn,
     setUserLoggedIn,
-    setActiveUserDetails,
     setShowNotification,
     setNotificationData,
   } = useContext(AppContext);
@@ -25,6 +26,13 @@ const LoginForm = () => {
 
   // initiate navigation
   const navigate = useNavigate();
+
+  // redirect a user to the job-queue page if they are logged in and have a valid token
+  useEffect(() => {
+    if (getValidToken(setUserLoggedIn) && userLoggedIn) {
+      navigate('/job-queue');
+    }
+  }, []);
 
   // checks input on type and doesnt allow special character except those required for email
   const checkInput = (text, type) => {
@@ -61,8 +69,8 @@ const LoginForm = () => {
         });
         setShowNotification(true)
 
-        // set user details in context
-        setActiveUserDetails(response)
+        // store jwt
+        localStorage.setItem('jwtToken', response.jwt);
 
         // set user as logged in
         setUserLoggedIn(true);
