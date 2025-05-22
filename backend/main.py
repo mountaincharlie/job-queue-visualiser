@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -55,6 +55,7 @@ async def check_credentials(credentials: Credentials):
         payload = {
             "username": credentials.username,
             'role': user_details['Role'],
+            "exp": datetime.now(timezone.utc) + timedelta(hours=1)
         }
         token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
