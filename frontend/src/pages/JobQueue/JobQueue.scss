@@ -1,0 +1,7 @@
+@use '../../styles/variables.scss' as vars;
+
+.job-queue{
+  color: vars.$default-dark;
+  background-color: vars.$default-light;
+  height: 100vh;
+}

@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from "react-router";
 import Button from '../Button/Button';
 import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 import { postCheckUserCredentials } from '../../services/userServices';
@@ -11,6 +12,7 @@ import './LoginForm.scss';
 const LoginForm = () => {
 
   const { 
+    setUserLoggedIn,
     setActiveUserDetails,
     setShowNotification,
     setNotificationData,
@@ -20,6 +22,9 @@ const LoginForm = () => {
   const [passwordInput, setPasswordInput] = useState('');  // handle text input for password
   const [showPassword, setShowPassword] = useState(false);  // hide/show state for password
   const [showSpinner, setShowSpinner] = useState(false);  // state for loading spinner
+
+  // initiate navigation
+  const navigate = useNavigate();
 
   // checks input on type and doesnt allow special character except those required for email
   const checkInput = (text, type) => {
@@ -49,9 +54,6 @@ const LoginForm = () => {
 
       // handle success
       if (response) {
-        // set user details in context
-        setActiveUserDetails(response)
-
         // success notification
         setNotificationData({
           type: "success",
@@ -59,8 +61,14 @@ const LoginForm = () => {
         });
         setShowNotification(true)
 
-        // TODO: redirect to Job Queue
+        // set user details in context
+        setActiveUserDetails(response)
 
+        // set user as logged in
+        setUserLoggedIn(true);
+
+        // triggers redirect
+        navigate("/job-queue");
 
         // close spinner
         setShowSpinner(false)
