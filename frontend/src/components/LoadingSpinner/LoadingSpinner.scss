@@ -1,0 +1,18 @@
+@use '../../styles/variables.scss' as vars;
+
+.loading-spinner{
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+  background-color: rgba(vars.$default-light, 0.5);
+
+  &-text{
+    margin-top: 1em;
+    color: #000;
+    font-size: 20px;
+  }
+}

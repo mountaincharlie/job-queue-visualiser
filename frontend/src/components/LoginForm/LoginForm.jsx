@@ -1,36 +1,94 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Button from '../Button/Button';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import { postCheckUserCredentials } from '../../services/userServices';
+import { AppContext } from '../../contexts/AppContext';
+import { IoMdEye } from "react-icons/io";
+import { IoEyeOff } from "react-icons/io5";
 import './LoginForm.scss';
 
 
 const LoginForm = () => {
 
+  const { 
+    setActiveUserDetails,
+    setShowNotification,
+    setNotificationData,
+  } = useContext(AppContext);
+
   const [usernameInput, setUsernameInput] = useState('');  // handle text input for username
   const [passwordInput, setPasswordInput] = useState('');  // handle text input for password
+  const [showPassword, setShowPassword] = useState(false);  // hide/show state for password
+  const [showSpinner, setShowSpinner] = useState(false);  // state for loading spinner
 
-
-  // check inputs - TODO: confrim this works
+  // checks input on type and doesnt allow special character except those required for email
   const checkInput = (text, type) => {
-    if (/^[a-zA-Z0-9_-]*$/.test(text) && text.length < 50) {
-      if (type === 'username') {
+    if (type === 'username') {
+      if (/^[a-zA-Z0-9._@-]*$/.test(text) && text.length < 45) {
         setUsernameInput(text);
-      }
+      } 
+    }
 
-      if (type === 'password') {
+    if (type === 'password') {
+      if (/^[a-zA-Z0-9._@-]*$/.test(text) && text.length < 30) {
         setPasswordInput(text);
-      }
+      } 
     }
   };
 
-  // handle form submission
-  // - validation
-  // - loader / spinner / disable form
-  // - handle errors / notification
-  // success notification / redirect to job queue page
-  // hash the password here before passing to backend
+  const handleLoginFormSubmission = async () => {
+    try {
+      setShowSpinner(true);
 
+      // POST request to backend to check credentials
+      var response = await postCheckUserCredentials({ 'username': usernameInput, 'password': passwordInput });
+
+      // reset the username and password state after request
+      setUsernameInput('');
+      setPasswordInput('');
+
+      // handle success
+      if (response) {
+        // set user details in context
+        setActiveUserDetails(response)
+
+        // success notification
+        setNotificationData({
+          type: "success",
+          message: "Successfully logged in.",
+        });
+        setShowNotification(true)
+
+        // TODO: redirect to Job Queue
+
+
+        // close spinner
+        setShowSpinner(false)
+      }
+
+    } catch (error) {
+      console.error(error);
+      // error notification
+      setNotificationData({
+        type: "error",
+        message: `${error.message}`,
+      });
+      setShowNotification(true);
+      // reset the password and remove the spinner
+      setPasswordInput('');
+      setShowSpinner(false);
+    }
+  };
+
+  // TODO: maybe add annimate fade in?
   return(
     <div className="loginform">
+
+      {/* spinner shows while the form processes */}
+      {showSpinner &&
+        <LoadingSpinner height={'35rem'} width={'40rem'}/>
+      }
+
       <div className="loginform-inputs-container">
         {/* username input */}
         <div className="loginform-username">
@@ -45,22 +103,29 @@ const LoginForm = () => {
         {/* password input */}
         <div className="loginform-password">
           <label>PASSWORD</label>
-          <input
-            type="password"
-            value={passwordInput}
-            onChange={(e) => checkInput(e.target.value, 'password')}
-          />
-          {/* TODO: add eye open/close button to toggle between input type "text" and "password" */}
+          
+          <div className="loginform-password-input-wrapper">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={passwordInput}
+              onChange={(e) => checkInput(e.target.value, 'password')}
+            />
+            <Button 
+              title={showPassword ? <IoMdEye/> : <IoEyeOff/>}
+              onClick={() => setShowPassword(!showPassword)}
+              tooltip={showPassword ? 'Hide password' : 'Show password'}
+            />
+          </div>
         </div>
       </div>
 
       {/* login button */}
       <Button
         title={'LOG IN'}
-        color={'#96AFB8'}
+        color={'#a9c7d2'}
         textColor={'#18424E'}
-        // onClick={toggleControlPanelHide}  // toggle hide/show control panel
-        // tooltip={'Log in'}
+        onClick={() => handleLoginFormSubmission()}
+        disabled={usernameInput.length === 0 || passwordInput.length === 0}
       />
     </div>
   );

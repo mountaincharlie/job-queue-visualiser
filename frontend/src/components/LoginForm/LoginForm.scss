@@ -9,6 +9,7 @@
   height: 35rem;
   width: 40rem;
   border-radius: 12px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.18), 0 6px 20px 0 rgba(0, 0, 0, 0.15);
 
   background-color: vars.$default-dark;
   color: vars.$default-light;
@@ -26,18 +27,42 @@
 
   &-password {
     margin-top: 3em;
+    position: relative;
+    left: 20px;
+
+    &-input-wrapper {
+      display: flex;
+      align-items: center;
+
+      .button-wrapper {
+        position: relative;
+        right: 40px;
+        box-shadow: none;
+
+        .button{
+          min-width: 1em;
+          font-size: 22px;
+          padding: 0.5rem;
+          color: #18434E !important;
+          background-color: #a9c7d2 !important;
+        }
+      }
+    }
   }
 
   label {
     font-size: 20px;
+    margin-bottom: 0.25em;
   }
 
   input {
     font-size: 20px;
+    font-family: vars.$default-font;
     padding: 0.5em 1em;
     border-radius: 4px;
     border-color: vars.$default-light;
     width: 350px;
     background-color: vars.$default-light;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.18), 0 6px 20px 0 rgba(0, 0, 0, 0.15);
   }
 }
