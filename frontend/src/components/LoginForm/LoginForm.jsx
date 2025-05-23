@@ -96,7 +96,6 @@ const LoginForm = () => {
     }
   };
 
-  // TODO: maybe add annimate fade in?
   return(
     <div className="loginform">
 

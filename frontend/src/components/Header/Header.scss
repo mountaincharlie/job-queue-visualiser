@@ -25,7 +25,8 @@
     &-logout {
       position:absolute;
       font-size: 25px;
-      right: 3em;
+      right: 1rem;
+      top: 8vh;
       text-decoration: underline;
 
       &:hover{
@@ -35,6 +36,11 @@
 
     svg:hover {
       cursor: pointer;
+    }
+
+    .username {
+      font-size: 20px;
+      margin-right: 0.5em;
     }
   }
 }

@@ -6,6 +6,24 @@ from fastapi import HTTPException
 USERS_DATA_PATH = 'data/users.xlsx'
 JOBS_DATA_PATH = 'data/jobs_data.xlsx'
 
+# by sheet name and then required columns within the sheet - TODO: make gloabl var?
+REQUIRED_COLS = {
+    'ActiveQueue': [
+        'Name', 
+        'WorkflowTypeID', 
+        'SubmittedBy', 
+        'StartTime', 
+        'EndTime', 
+        'StatusMessage', 
+        'OutputResult ', # typo in the xslx
+        'errorMessage',
+    ],
+    'WorkflowDefinition': [
+        'WorkflowTypeID', 
+        'WorkflowType',
+    ]
+}
+
 
 def read_users():
     ''' read and return the entire users df '''
@@ -36,30 +54,12 @@ def read_jobs(username: Optional[str] = None) -> pd.DataFrame:
     Returns a pandas dataframe.
     '''
 
-    # by sheet name and then required columns within the sheet - TODO: make gloabl var?
-    required_columns = {
-        'ActiveQueue': [
-            'Name', 
-            'WorkflowTypeID', 
-            'SubmittedBy', 
-            'StartTime', 
-            'EndTime', 
-            'StatusMessage', 
-            'OutputResult ', # typo in the xslx
-            'errorMessage',
-        ],
-        'WorkflowDefinition': [
-            'WorkflowTypeID', 
-            'WorkflowType',
-        ]
-    }
-
     try:
         # read required columns from the ActiveQueue sheet
         jobs_df = pd.read_excel(
             JOBS_DATA_PATH,
             sheet_name='ActiveQueue',
-            usecols=required_columns['ActiveQueue']
+            usecols=REQUIRED_COLS['ActiveQueue']
         )
 
         # filtering if username is provided
@@ -75,7 +75,7 @@ def read_jobs(username: Optional[str] = None) -> pd.DataFrame:
         workflow_df = pd.read_excel(
             JOBS_DATA_PATH,
             sheet_name='WorkflowDefinition',
-            usecols=required_columns['WorkflowDefinition']
+            usecols=REQUIRED_COLS['WorkflowDefinition']
         )
 
         # filter by the necessary workflow_ids

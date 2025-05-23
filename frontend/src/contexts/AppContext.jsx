@@ -3,7 +3,6 @@ import { createContext, useReducer } from "react";
 const initialState = {
   // -- users
   userLoggedIn: localStorage.getItem("userLoggedIn") === "true",  // checks local storage rather than setting default false
-  activeUserDetails: null,  // user object - TODO: check if this is necessary (some details are stored in the JWT too)
   // -- notifications
   showNotification: false,
   notificationData: { type:"info", message:"", duration:null },
@@ -14,8 +13,6 @@ function reducer (state, action) {
     case "SET_USER_LOGGED_IN":
       localStorage.setItem("userLoggedIn", action.payload);
       return { ...state, userLoggedIn: action.payload };
-    case "SET_ACTIVE_USER_DETAILS":
-      return { ...state, activeUserDetails: action.payload };
     case "SET_SHOW_NOTIFICATION":
       return { ...state, showNotification: action.payload };
     case "SET_NOTIFICATION_DATA":
@@ -37,10 +34,6 @@ const AppProvider = ({ children }) => {
     dispatch({ type: "SET_USER_LOGGED_IN", payload });
   };
 
-  const setActiveUserDetails = (payload) => {
-    dispatch({ type: "SET_ACTIVE_USER_DETAILS", payload });
-  };
-
   // -- notifications
 
   const setShowNotification = (payload) => {
@@ -55,7 +48,6 @@ const AppProvider = ({ children }) => {
   const value = {
     ...state,
     setUserLoggedIn,
-    setActiveUserDetails,
     setShowNotification,
     setNotificationData,
   };

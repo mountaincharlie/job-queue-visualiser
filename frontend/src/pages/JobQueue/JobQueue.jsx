@@ -80,7 +80,6 @@ const JobQueue = () => {
 
       // handle success
       if (response) {
-        console.log('response: ', response)
         // prep the returned data into rows
         const data = prepTableRows(response);
         // set setDataRows
@@ -237,8 +236,9 @@ const JobQueue = () => {
   return(
     <div className="job-queue">
 
-      {/* TODO: pass the activeUser.username to the header for the icon hover? */}
-      <Header />
+      <Header 
+        username={activeUser.username}
+      />
 
       {/* notification placeholder container */}
       { showNotification &&
