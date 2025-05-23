@@ -4,4 +4,47 @@
   color: vars.$default-dark;
   background-color: vars.$default-light;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  &-notification-container {
+    top: 8vh;
+    width: 100%;
+    margin: auto;
+    position: absolute;
+  }
+
+  &-heading-container {
+    height: 10vh;
+    display: flex;
+    align-items:last baseline;
+    justify-content: space-between;
+    width: 90%;
+    margin: auto;
+
+    .heading {
+      font-size: 3.5em;
+      font-weight: 900;
+    }
+
+    .view-selection-container {
+      display: flex;
+      align-items: center;
+
+      &-label {
+        font-weight: 900;
+        font-size: 20px;
+        padding-right: 0.5em;
+      }
+
+    }
+  }
+
+  &-table-container {
+    height: 80vh;
+    width: 95%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+  }
 }

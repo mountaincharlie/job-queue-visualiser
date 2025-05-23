@@ -1,0 +1,15 @@
+@use '../../styles/variables.scss' as vars;
+
+.select {
+
+  div {
+    color: white;
+    div {
+      color: vars.$default-light;
+    }
+  }
+
+  .react-select__control, .react-select__menu {
+    background-color: vars.$default-dark;
+  }
+}
