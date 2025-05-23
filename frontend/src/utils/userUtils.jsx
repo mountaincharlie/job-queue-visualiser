@@ -22,8 +22,25 @@ export function getValidToken(setUserLoggedIn) {
     return token;
     
   } catch (e) {
+    console.error(e);
     localStorage.removeItem('jwtToken');
     setUserLoggedIn(false);
+    return null;
+  }
+}
+
+// return a particular user detail e.g. the username, role or exp (expiry time)
+export function getUserDetail(token, detail) {
+  if (!token) return null;
+
+  // decode token and return
+  try {
+    const decoded_token = jwtDecode(token);
+
+    return decoded_token[detail];
+    
+  } catch (e) {
+    console.error(e);
     return null;
   }
 }
