@@ -112,6 +112,9 @@ def read_jobs(username: Optional[str] = None) -> pd.DataFrame:
         # filter by the necessary workflow_ids
         workflow_df = workflow_df[workflow_df["WorkflowTypeID"].isin(workflow_ids)]
 
+        # drop duplicates
+        workflow_df = workflow_df.drop_duplicates(subset=['WorkflowTypeID'])
+
         # merge the dataframes by WorkflowTypeID
         merged_df = jobs_df.merge(workflow_df, on="WorkflowTypeID", how="left")
 
