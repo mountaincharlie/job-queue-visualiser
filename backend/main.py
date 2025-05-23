@@ -34,7 +34,6 @@ async def get_my_jobs(
     skip: int = Query(0, ge=0),
     limit: Optional[int] = Query(None, ge=1, le=500)
 ):
-    print('get my jobs')
     try:
         username = payload.get('username')
         # raise a bad request exception if no username 
@@ -63,8 +62,30 @@ async def get_my_jobs(
     
 
 # # get all jobs endpoint (user details not required)
-# @app.get("/jobs")
-# async def get_all_jobs(_: dict = Depends(verify_token)):
+@app.get("/jobs")
+async def get_all_jobs(
+    _: dict = Depends(verify_token),
+    skip: int = Query(0, ge=0),
+    limit: Optional[int] = Query(None, ge=1, le=500)
+):
+    try:
+        # call a function to read all columns from the xlsx sheet
+        jobs_df = read_jobs()
+
+        # pass into formatting function
+        formatted_jobs_data = format_jobs_data(jobs_df)
+
+        # paginate data
+        paginated_jobs_data = paginate(formatted_jobs_data, skip, limit)
+
+        return paginated_jobs_data
+
+    except HTTPException as http_err:
+        raise http_err
+
+    except Exception as e:
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail="An error occured")
 
 
 # check user credentials endpoint

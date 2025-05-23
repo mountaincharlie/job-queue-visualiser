@@ -6,9 +6,8 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 import Button from '../../components/Button/Button';
 import { AppContext } from '../../contexts/AppContext';
 import { getUserDetail } from '../../utils/userUtils';
-import { getMyJobs } from '../../services/jobServices';
+import { getMyJobs, getAllJobs } from '../../services/jobServices';
 import './JobQueue.scss';
-import { duration } from '@mui/material';
 
 
 const JobQueue = () => {
@@ -30,7 +29,8 @@ const JobQueue = () => {
   const [selectedOption, setSelectedOption] = useState(dropdownOptions[0]);  // default to My Job
   const [dataRows, setDataRows] = useState([]);
 
-  // check token on page load and fetch my jobs by default
+
+  // on page load - check token and fetch my jobs by default
   useEffect(() => {
     const token = localStorage.getItem('jwtToken')
 
@@ -41,10 +41,12 @@ const JobQueue = () => {
       setActiveUser({ username: username, token: token, role: role });
     }
 
-    // call get my jobs endpoint and pass username directly incase setActiveUsername hasnt completed
+    // call get my jobs endpoint
     handleGetMyJobs(token);
   }, []);
 
+
+  // -- API service calls
 
   // handle get user's jobs
   const handleGetMyJobs = async (token) => {
@@ -70,55 +72,55 @@ const JobQueue = () => {
     }
   };
 
-
   // handle get all jobs
-  // const handleGetAllJobs = async () => {
-  //   try {
+  const handleGetAllJobs = async () => {
+    try {
+      // GET all jobs
+      var response = await getAllJobs(activeUser.token);
 
-  //     // TODO - needs spinner?
-
-  //     // GET active user's jobs
-  //     var response = await getMyJobs(activeUser.token, activeUser.username);
-
-  //     // handle success
-  //     if (response) {
-  //       console.log('response: ', response)
-
-  //       // call function to prep the returned data into 'rows'
-
-  //       // // close spinner
-  //       // setShowSpinner(false)
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //     // error notification
-  //     setNotificationData({
-  //       type: "error",
-  //       message: `${error.message}`,
-  //     });
-  //     setShowNotification(true);
-  //   }
-  // };
+      // handle success
+      if (response) {
+        console.log('response: ', response)
+        // prep the returned data into rows
+        const data = prepTableRows(response);
+        // set setDataRows
+        setDataRows(data);
+      }
+    } catch (error) {
+      console.error(error);
+      // error notification
+      setNotificationData({
+        type: "error",
+        message: `${error.message}`,
+      });
+      setShowNotification(true);
+    }
+  };
 
 
+  // -- component handling
 
   // handle view selection from dropdown
-  const handleViewDropdownOption = (selectedOption) => {
-    // set the selected option
-    // setSelectedOption(selectedOption);
+  const handleViewDropdownOption = (value) => {
 
     // call associated API call 
-    if (selectedOption === 'my-jobs') {
+    if (value === 'all-jobs') {
+      // if the user is not an admin, do not allow
+      // NOTE: this is an extra check since non-admins should not have the dropdown
+      if (activeUser.role !== 'admin') {
+        return
+      }
+      // call get my jobs endpoint
+      handleGetAllJobs(activeUser.token);
+    }
+    if (value === 'my-jobs') {
       // call get my jobs endpoint
       handleGetMyJobs(activeUser.token);
     } 
-    // if (selectedOption === 'all-jobs') {
-    //    // TODO: extra check that they have role === admin else no call to endpoint
-    //   // call get my jobs endpoint
-    //   handleGetAllJobs(activeUser.token);
-    // }
-  };
 
+    // set the selected option in state
+    setSelectedOption(dropdownOptions.find(option => option.value === value));
+  };
 
   // handle download for OutputResults button
   // NOTE: i dont have the correct permissions to get access to the actual
@@ -149,7 +151,6 @@ const JobQueue = () => {
     }
   };
 
-
   // format text from snake_case to Capitalised And Spaces
   const formatText = (text) => {
     if (!text) return ""; // handle null/undefined
@@ -159,7 +160,6 @@ const JobQueue = () => {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
-
 
   // preparing the row data from the api response
   const prepTableRows = (responseData) => {
@@ -177,7 +177,6 @@ const JobQueue = () => {
       }
     ))
   };
-
 
   // define columns
   const columns = [
@@ -254,7 +253,7 @@ const JobQueue = () => {
       }
 
       <div className="job-queue-heading-container">
-        <div className="heading">MY JOBS</div>
+        <div className="heading">{selectedOption.label}</div>
 
         {/* views dropdown only valid for admin users */}
         {activeUser.role === 'admin' &&
@@ -263,7 +262,7 @@ const JobQueue = () => {
             <Dropdown 
               options={dropdownOptions}
               value={selectedOption}
-              onChange={setSelectedOption}
+              onChange={(newOption) => handleViewDropdownOption(newOption?.value)}
               isClearable={false}
               isSearchable={false}
             />
