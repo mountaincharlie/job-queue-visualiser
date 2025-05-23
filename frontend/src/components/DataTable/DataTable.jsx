@@ -16,8 +16,22 @@ const DataTable = ({ columns=[], rows=[], rowsPerPage=5 }) => {
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
-        checkboxSelection
-        sx={{ border: 0, backgroundColor: '#18434E', color: '#a9c7d2' }}
+        sx={{ 
+          border: 0, 
+          backgroundColor: '#18434E', 
+          color: '#a9c7d2',
+          '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: '#000 !important',
+            color: '#18434E',
+            fontWeight: 'bold',
+          },
+          '& .MuiDataGrid-row:hover': {
+            backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          },
+          '& .MuiTablePagination-root, .MuiIconButton-root': {
+            color: '#a9c7d2',
+          },
+        }}
       />
     </Paper>
   );
