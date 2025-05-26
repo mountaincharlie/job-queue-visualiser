@@ -3,10 +3,11 @@ from typing import Optional, List, Dict
 from fastapi import HTTPException
 
 
+# paths to required xlsx files
 USERS_DATA_PATH = 'data/users.xlsx'
 JOBS_DATA_PATH = 'data/jobs_data.xlsx'
 
-# by sheet name and then required columns within the sheet - TODO: make gloabl var?
+# required columns by sheet name
 REQUIRED_COLS = {
     'ActiveQueue': [
         'Name', 
@@ -26,7 +27,7 @@ REQUIRED_COLS = {
 
 
 def read_users():
-    ''' read and return the entire users df '''
+    ''' reads and returns the entire users df '''
 
     try:
         df = pd.read_excel(USERS_DATA_PATH)
@@ -43,7 +44,7 @@ def get_user_details(username: str):
     if username not in df['Username'].values:
         raise HTTPException(status_code=401, detail="Invalid username or password")
     user_row = df[df['Username'] == username].iloc[0]
-    
+
     return user_row
 
 
@@ -63,8 +64,9 @@ def read_jobs(username: Optional[str] = None) -> pd.DataFrame:
         )
 
         # filtering if username is provided
-        # NOTE: ideal ony the required data would be read in teh first place but skiprows 
-        # is better supported for read_csv() than read_excel()
+        # NOTE: ideal ony the required data would be read in the first place but skiprows
+        # is better supported for read_csv() than read_excel() so we just use filtering at
+        # the earliest point
         if username:
             jobs_df = jobs_df[jobs_df["SubmittedBy"] == username]
 
@@ -90,10 +92,10 @@ def read_jobs(username: Optional[str] = None) -> pd.DataFrame:
         return merged_df
 
     except KeyError as e:
-        ValueError(f"Missing required column {e}")
+        raise ValueError(f"Missing required column {e}")
     except Exception as e:
         raise RuntimeError(f"Failed to read jobs data: {e}")
-    
+
 
 def format_jobs_data(jobs_df) -> List[Dict]:
     ''' 
@@ -112,20 +114,18 @@ def format_jobs_data(jobs_df) -> List[Dict]:
         if pd.isna(row['EndTime']):
             return 'N/A'
         return str(row['EndTime']- row['StartTime'])
-    
+
     # function to determine progress
     def set_progress(row):
         return 'Finished' if pd.notna(row['EndTime']) else 'Active'
-    
-    # get workflow task
-    
+
     # function to create details field
     def set_details(row):
         # use empty string rather than nan for the json later
         def safe_get(field):
             val = row.get(field)
             return "" if pd.isna(val) else val
-        return { 
+        return {
             "errorMessage": safe_get("errorMessage"),
             "OutputResult": safe_get("OutputResult "),
         }
@@ -133,11 +133,11 @@ def format_jobs_data(jobs_df) -> List[Dict]:
     # first convert times into pandas datetime
     jobs_df["StartTime"] = pd.to_datetime(jobs_df["StartTime"], errors="coerce")
     jobs_df["EndTime"] = pd.to_datetime(jobs_df["EndTime"], errors="coerce")
-    
+
     # apply duration and progress to the df (axis 1 so its applied on rows)
     jobs_df['duration'] = jobs_df.apply(calc_duration, axis=1)
     jobs_df['progress'] = jobs_df.apply(set_progress, axis=1)
-    
+
     # rename fields
     formatted_df = jobs_df.rename(columns={
         "Name": "job_id",
@@ -146,7 +146,7 @@ def format_jobs_data(jobs_df) -> List[Dict]:
         "StartTime": "start_time",
         "StatusMessage": "status",
     })
-    
+
     # apply details to the df (doesnt require columns which were renamed)
     formatted_df['details'] = formatted_df.apply(set_details, axis=1)
 

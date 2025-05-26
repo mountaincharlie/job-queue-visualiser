@@ -43,4 +43,3 @@ def generate_jwt(username, role):
     }
 
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-

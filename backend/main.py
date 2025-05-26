@@ -12,7 +12,7 @@ load_dotenv()
 
 app = FastAPI()
 
-# allow access from teh frontend
+# allow access from the frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -24,6 +24,7 @@ USERS_DATA_PATH = 'data/users.xlsx'
 
 # pydantic model for credential request body
 class Credentials(BaseModel):
+    ''' class for user credentials '''
     username: str
     password: str
 
@@ -34,9 +35,18 @@ async def get_my_jobs(
     skip: int = Query(0, ge=0),
     limit: Optional[int] = Query(None, ge=1, le=500)
 ):
+    ''' 
+    Get jobs belonging to a specific user using the returned payload
+    from verify_token.
+    Params, skip and optional limit used for pagination and allowing
+    limited requests to be made.
+    Returns a list of dictionaries which FastAPI handles sending to the
+    frontend in JSON format.
+    '''
+
     try:
         username = payload.get('username')
-        # raise a bad request exception if no username 
+        # raise a bad request exception if no username
         if not username:
             raise HTTPException(status_code=400, detail="Invalid token payload")
 
@@ -52,14 +62,15 @@ async def get_my_jobs(
 
         return paginated_jobs_data
 
+    # handles the specified expected errors
     except HTTPException as http_err:
         raise http_err
 
+    # handles other errors
     except Exception as e:
         print("Error:", e)
         raise HTTPException(status_code=500, detail="An error occured")
 
-    
 
 # # get all jobs endpoint (user details not required)
 @app.get("/jobs")
@@ -68,6 +79,15 @@ async def get_all_jobs(
     skip: int = Query(0, ge=0),
     limit: Optional[int] = Query(None, ge=1, le=500)
 ):
+    ''' 
+    Get all job.
+    Depends on the user token being verified.
+    Params, skip and optional limit used for pagination and allowing
+    limited requests to be made.
+    Returns a list of dictionaries which FastAPI handles sending to the
+    frontend in JSON format.
+    '''
+
     try:
         # call a function to read all columns from the xlsx sheet
         jobs_df = read_jobs()
@@ -80,9 +100,11 @@ async def get_all_jobs(
 
         return paginated_jobs_data
 
+    # handles the specified expected errors
     except HTTPException as http_err:
         raise http_err
 
+    # handles other errors
     except Exception as e:
         print("Error:", e)
         raise HTTPException(status_code=500, detail="An error occured")
@@ -91,6 +113,17 @@ async def get_all_jobs(
 # check user credentials endpoint
 @app.post("/users")
 async def check_credentials(credentials: Credentials):
+    ''' 
+    Send the user credentials of type Credentials, to compare to the stored
+    user records.
+    Gets the user's details from the database (users.xlsx sheet) and compares the
+    stored hashed password with the credentials.password using bcrypt.
+    For a valid username and password a JSON Web Token is generated incorporating the
+    users username and role.
+    Returns the users details as a dictionary which FastAPI handles sending to the
+    frontend in JSON format.
+    '''
+
     try:
         # get the row for the user
         user_details = get_user_details(credentials.username)
@@ -99,7 +132,7 @@ async def check_credentials(credentials: Credentials):
         # check if the credentials password matches
         if not bcrypt.verify(credentials.password, hashed_password):
             raise HTTPException(status_code=401, detail="Invalid username or password")
-        
+
         # generate jwt
         token = generate_jwt(credentials.username, user_details['Role'])
 
@@ -110,10 +143,12 @@ async def check_credentials(credentials: Credentials):
             'role': user_details['Role'],
             'jwt': token
         }
-    
+
+    # handles the specified expected errors
     except HTTPException as http_err:
         raise http_err
 
+    # handles other errors
     except Exception as e:
         print("Error:", e)
         raise HTTPException(status_code=500, detail="An error occured")
