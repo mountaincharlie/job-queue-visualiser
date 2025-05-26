@@ -8,7 +8,8 @@ import { getValidToken } from "./userUtils";
 const ProtectedRoute = ({ children }) => {
 
   // uses the logger in status from the AppContext to check authentication status
-  // NOTE: the context is reset when the app is refreshed
+  // NOTE: the context is reset when the app is refreshed 
+  // (but the login default uses local storage - see AppContext)
   const { 
     userLoggedIn,
     setUserLoggedIn,

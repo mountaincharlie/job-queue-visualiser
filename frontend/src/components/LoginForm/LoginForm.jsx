@@ -54,7 +54,10 @@ const LoginForm = () => {
       setShowSpinner(true);
 
       // POST request to backend to check credentials
-      var response = await postCheckUserCredentials({ 'username': usernameInput, 'password': passwordInput });
+      var response = await postCheckUserCredentials({
+        'username': usernameInput,
+        'password': passwordInput 
+      });
 
       // reset the username and password state after request
       setUsernameInput('');
@@ -67,7 +70,7 @@ const LoginForm = () => {
           type: "success",
           message: "Successfully logged in.",
         });
-        setShowNotification(true)
+        setShowNotification(true);
 
         // store jwt
         localStorage.setItem('jwtToken', response.jwt);
@@ -79,7 +82,7 @@ const LoginForm = () => {
         navigate("/job-queue");
 
         // close spinner
-        setShowSpinner(false)
+        setShowSpinner(false);
       }
 
     } catch (error) {

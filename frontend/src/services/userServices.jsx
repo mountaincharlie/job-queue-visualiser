@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_BASE_URL = "http://localhost:8000"
 
 
-// POST request to check user credentials - returns user object with`JWT if valid
+// POST request to check user credentials - returns user object with JWT if valid
 export const postCheckUserCredentials = async ( credentials ) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/users`, credentials);
