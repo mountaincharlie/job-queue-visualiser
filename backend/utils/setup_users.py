@@ -1,3 +1,9 @@
+''' 
+    Generates the users.xlsx file based on the data from the 
+    main jobs queue xslx file and includes a username, list of 
+    associated jobs, a hashed password and role for each user.
+'''
+
 import pandas as pd
 from passlib.hash import bcrypt
 from dotenv import load_dotenv
@@ -9,13 +15,9 @@ JOBS_DATA_PATH = 'data/jobs_data.xlsx'
 USERS_DATA_OUT = 'data/users.xlsx'
 
 
-# run from backend dir, with: python3 utils/setup_users.py 
+# run from backend dir, with: python3 utils/setup_users.py
 if __name__ == "__main__":
-    ''' 
-    Generates the users.xlsx file based on the data from the 
-    main jobs queue xslx file and includes a username, list of 
-    associated jobs, a hashed password and role for each user.
-    '''
+
     # read the xlsx file once into a pandas df
     df = pd.read_excel(JOBS_DATA_PATH)
 
@@ -34,11 +36,11 @@ if __name__ == "__main__":
             "Role": "admin"  # default set all users to admin for now
         }
         user_objects.append(user)
-    
+
     # convert list of dicts to dataframe
     users_df = pd.DataFrame(user_objects)
 
     # write users dataframe to excel
     users_df.to_excel(USERS_DATA_OUT, index=False)
-    
+
     print('The users sheet can be found at:', USERS_DATA_OUT)

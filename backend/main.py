@@ -138,9 +138,6 @@ async def check_credentials(credentials: Credentials):
 
         # return user object
         return {
-            'username': credentials.username,
-            'jobs': user_details['Jobs'],
-            'role': user_details['Role'],
             'jwt': token
         }
 
